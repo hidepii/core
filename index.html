@@ -3,79 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pascal Site Security - PII Redactor</title>
+    <title>PII Detector & Masker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <main class="dashboard-card">
+        <!-- Unified Connected Control Panel -->
+        <div class="unified-card">
             
-            <div class="dashboard-section">
-                <div id="drop-zone" class="compact-dropzone">
-                    <input type="file" id="file-input" accept=".txt" hidden>
-                    <svg class="icon-upload" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"></path></svg>
-                    <span class="dropzone-text">Drop or <span class="link-text">Browse .txt file</span></span>
+            <!-- STEP 1: Input Area -->
+            <div class="step-section">
+                <div class="step-badge">1</div>
+                
+                <div class="step-header">
+                    <h2>Input Source</h2>
+                    <!-- Import Button placed beautifully at the top-right of Step 1 -->
+                    <button type="button" class="upload-link-btn" id="drop-zone">
+                        <svg class="upload-inline-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                        </svg>
+                        Import from .txt file
+                    </button>
+                    <input type="file" id="file-input" accept=".txt" style="display: none;">
                 </div>
 
-                <div class="input-group">
-                    <div class="input-header-row">
-                        <label for="main-textarea">Text Workspace <span class="badge-status">🔒 Client-Side Only</span></label>
-                        <span id="word-char-count" class="meta-count">0 words | 0 chars</span>
+                <textarea id="main-textarea" placeholder="Type or paste your text here to begin masking..."></textarea>
+                <div class="textarea-footer">
+                    <span id="word-char-count">0 words | 0 chars</span>
+                </div>
+            </div>
+
+            <!-- STEP 2: Custom Keywords -->
+            <div class="step-section">
+                <div class="step-badge">2</div>
+                
+                <div class="step-header">
+                    <h2>Custom Keywords</h2>
+                </div>
+                <div class="custom-filter-box">
+                    <p class="desc-text">Add specific words to mask instantly. Press Enter or comma.</p>
+                    <input type="text" id="custom-filter-input" placeholder="Type secret keywords...">
+                    <div id="custom-tags" class="tags-container"></div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Auto PII Scan & Export -->
+            <div class="step-section last-section">
+                <div class="step-badge">3</div>
+                
+                <div class="step-header">
+                    <h2>Scan & Redact</h2>
+                </div>
+                
+                <button id="filter-btn" class="btn btn-primary btn-block">Scan & Mask Auto PII</button>
+
+                <div class="results-header">
+                    <h3>Detected Auto PII Items</h3>
+                    <span class="count-badge" id="detected-count">0</span>
+                </div>
+
+                <!-- Dynamic & Growing Box with Flex-wrap -->
+                <div id="detected-container" class="detected-box">
+                    <div class="empty-state">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path>
+                        </svg>
+                        <span>No items detected. Click "Scan & Mask Auto PII" to find them.</span>
                     </div>
-                    <textarea id="main-textarea" placeholder="Type, paste sensitive text here, or drop a file above..."></textarea>
+                </div>
+
+                <div class="action-buttons-group">
+                    <button id="copy-btn" class="btn btn-secondary">Copy Text</button>
+                    <button id="download-btn" class="btn btn-secondary">Download .txt</button>
+                    <button id="reset-btn" class="btn btn-danger">Reset All</button>
                 </div>
             </div>
 
-            <div class="dashboard-section row-divider">
-                <div class="input-group">
-                    <label>Custom Filter Keywords <span class="label-opt">(Optional - Press Enter or Comma)</span></label>
-                    <div id="custom-filters-wrapper" class="compact-tags-wrapper">
-                        <div id="custom-tags" class="tags-holder"></div>
-                        <input type="text" id="custom-filter-input" placeholder="Add keyword...">
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-section row-divider">
-                <div class="action-grid">
-                    <button id="download-btn" class="btn btn-secondary">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path></svg>
-                        Download
-                    </button>
-                    
-                    <button id="copy-btn" class="btn btn-secondary">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0A2.25 2.25 0 0113.5 5.25h-3a2.25 2.25 0 01-2.166-1.612m5.154 5.712a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-4.5 3h4.5a2.25 2.25 0 012.25 2.25V19.5a2.25 2.25 0 01-2.25 2.25h-6A2.25 2.25 0 013 19.5v-6a2.25 2.25 0 012.25-2.25h1.5"></path></svg>
-                        <span id="copy-text">Copy All</span>
-                    </button>
-                    
-                    <button id="reset-btn" class="btn btn-danger">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path></svg>
-                        Reset
-                    </button>
-
-                    <button id="filter-btn" class="btn btn-primary">
-                        <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"></path></svg>
-                        Filter PII
-                    </button>
-                </div>
-            </div>
-
-            <div class="dashboard-section row-divider">
-                <div class="detected-panel">
-                    <h3>Detected Items <span id="detected-count" class="mini-count-badge">0</span></h3>
-                    <div id="detected-container" class="pill-grid">
-                        <div class="empty-state">
-                            <svg class="empty-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
-                            <span>No PII items detected yet.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+        </div>
     </div>
-    <script src="pii.js" defer></script>
-    <script src="app.js" defer></script>
+
+    <!-- Loading Scripts -->
+    <script src="pii_detector.js"></script>
+    <script src="custom_filter.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
-
