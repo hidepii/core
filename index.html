@@ -3,88 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PII Detector & Masker</title>
+    <title>Professional PII Detector & Redactor</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="app-container">
-        <!-- Unified Connected Control Panel -->
-        <div class="unified-card">
+        <div class="step-flow-container">
             
-            <!-- STEP 1: Input Area -->
-            <div class="step-section">
-                <div class="step-badge">1</div>
-                
-                <div class="step-header">
-                    <h2>Input Source</h2>
-                    <!-- Import Button placed beautifully at the top-right of Step 1 -->
-                    <button type="button" class="upload-link-btn" id="drop-zone">
-                        <svg class="upload-inline-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                        </svg>
-                        Import from .txt file
-                    </button>
-                    <input type="file" id="file-input" accept=".txt" style="display: none;">
-                </div>
-
-                <textarea id="main-textarea" placeholder="Type or paste your text here to begin masking..."></textarea>
-                <div class="textarea-footer">
-                    <span id="word-char-count">0 words | 0 chars</span>
-                </div>
-            </div>
-
-            <!-- STEP 2: Custom Keywords -->
-            <div class="step-section">
-                <div class="step-badge">2</div>
-                
-                <div class="step-header">
-                    <h2>Custom Keywords</h2>
-                </div>
-                <div class="custom-filter-box">
-                    <p class="desc-text">Add specific words to mask instantly. Press Enter or comma.</p>
-                    <input type="text" id="custom-filter-input" placeholder="Type secret keywords...">
-                    <div id="custom-tags" class="tags-container"></div>
-                </div>
-            </div>
-
-            <!-- STEP 3: Auto PII Scan & Export -->
-            <div class="step-section last-section">
-                <div class="step-badge">3</div>
-                
-                <div class="step-header">
-                    <h2>Scan & Redact</h2>
-                </div>
-                
-                <button id="filter-btn" class="btn btn-primary btn-block">Scan & Mask Auto PII</button>
-
-                <div class="results-header">
-                    <h3>Detected Auto PII Items</h3>
-                    <span class="count-badge" id="detected-count">0</span>
-                </div>
-
-                <!-- Dynamic & Growing Box with Flex-wrap -->
-                <div id="detected-container" class="detected-box">
-                    <div class="empty-state">
-                        <svg class="empty-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path>
-                        </svg>
-                        <span>No items detected. Click "Scan & Mask Auto PII" to find them.</span>
+            <!-- STEP 1: Input Source Text -->
+            <div class="step-block">
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <h2><span class="step-num">1</span>Input Source Text</h2>
+                        <button type="button" class="import-btn" id="upload-trigger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                            </svg>
+                            Import File
+                        </button>
+                        <input type="file" id="hidden-file-input" accept=".txt" style="display: none;">
                     </div>
+                    
+                    <textarea id="text-input" placeholder="Enter or paste your text here..."></textarea>
+                    <div class="textarea-counter"><span id="word-char-count">0 words | 0 chars</span></div>
                 </div>
+            </div>
 
-                <div class="action-buttons-group">
-                    <button id="copy-btn" class="btn btn-secondary">Copy Text</button>
-                    <button id="download-btn" class="btn btn-secondary">Download .txt</button>
-                    <button id="reset-btn" class="btn btn-danger">Reset All</button>
+            <!-- STEP 2: Custom Keyword Filter -->
+            <div class="step-block">
+                <div class="step-body">
+                    <h2 class="standalone-title"><span class="step-num">2</span>Custom Keyword Filter</h2>
+                    <div class="keyword-input-row">
+                        <input type="text" id="custom-keyword-input" placeholder="e.g., SecretProject">
+                        <button type="button" id="add-keyword-btn" class="btn-inline-add">Add</button>
+                    </div>
+                    <div class="tags-container" id="custom-tags-container"></div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Detected PII Items -->
+            <div class="step-block">
+                <div class="step-body">
+                    <div class="report-header">
+                        <h2><span class="step-num">3</span>Scan & Review Entities</h2>
+                        <span class="badge" id="detected-count">0</span>
+                    </div>
+                    
+                    <div class="detected-display-box" id="detected-items-container">
+                        <div class="empty-placeholder" id="empty-state-msg">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span>No items detected. Click "Scan & Filter Text" below.</span>
+                        </div>
+                    </div>
+
+                    <button type="button" id="scan-btn" class="btn btn-primary btn-full">Scan & Filter Text</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Actions -->
+            <div class="step-block">
+                <div class="step-body">
+                    <h2 class="standalone-title"><span class="step-num">4</span>Export Secure Output</h2>
+                    <div class="actions-row">
+                        <button type="button" id="copy-btn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Result
+                        </button>
+                        <button type="button" id="download-btn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            Download .txt
+                        </button>
+                        <button type="button" id="reset-btn" class="btn btn-danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                            Reset All
+                        </button>
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- Loading Scripts -->
-    <script src="pii_detector.js"></script>
     <script src="custom_filter.js"></script>
+    <script src="pii_detector.js"></script>
+    <script src="action.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
