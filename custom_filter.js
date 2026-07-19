@@ -1,75 +1,78 @@
-// --- Custom Filter Keyword Logic with Smart Word Boundary ---
-document.addEventListener('DOMContentLoaded', () => {
-    const customFilterInput = document.getElementById('custom-filter-input');
-    const customTagsContainer = document.getElementById('custom-tags');
-    const mainTextarea = document.getElementById('main-textarea');
+const hiddenDefaultKeywords = ['fuck', 'israel'];
+const userKeywords = new Set();
 
-    if (!customFilterInput || !customTagsContainer || !mainTextarea) return;
+const customKeywordInput = document.getElementById('custom-keyword-input');
+const addKeywordBtn = document.getElementById('add-keyword-btn');
+const customTagsContainer = document.getElementById('custom-tags-container');
 
-    customFilterInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault(); 
-            
-            let keyword = customFilterInput.value.trim();
-            if (keyword.endsWith(',')) {
-                keyword = keyword.slice(0, -1).trim();
-            }
-            
-            if (keyword === '') return;
-            
-            let text = mainTextarea.value;
-            let escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-            // --- স্মার্ট রেগুলার এক্সপ্রেশন (Smart Regex) ---
-            // ১. Lookbehind (?<=...): শব্দের আগে অবশ্যই স্পেস, ব্র্যাকেট, উদ্ধৃতি চিহ্ন বা বাংলা '।' থাকতে হবে। (কোনো লিংক বা @, #, / থাকা চলবে না)
-            // ২. Lookahead (?=...): শব্দের পরে অবশ্যই স্পেস, ব্র্যাকেট, উদ্ধৃতি চিহ্ন থাকতে হবে অথবা পাংচুয়েশন চিহ্নের পরে একটি স্পেস থাকতে হবে। (যেমন: doc.pdf বা doc/index আটকাবে)
-            let regexString = `(?<=^|[\\s([\`"'“‘।\\-]+)${escapedKeyword}(?=$|[\\s)\\]\`"'”’।\\-]+|[.,!?;:]+(?:\\s|$))`;
-            let regex = new RegExp(regexString, 'gi');
-            
-            // টেক্সটে এই নির্দিষ্ট রুল অনুযায়ী কোনো ম্যাচ আছে কিনা পরীক্ষা করা
-            let matches = text.match(regex);
-            if (!matches) {
-                customFilterInput.value = '';
-                return; // কোনো পারফেক্ট ম্যাচ না পেলে ট্যাগ তৈরি হবে না
-            }
-            
-            let associatedTokens = [];
-            
-            // শুধুমাত্র নির্দিষ্ট ম্যাচিং শব্দগুলোকে ইউনিক টোকেন দিয়ে পরিবর্তন করা
-            text = text.replace(regex, (match) => {
-                let token = `[HIDDEN_CUSTOM_${window.AppState.tokenId++}]`;
-                window.AppState.tokenMap[token] = { original: match, type: 'custom', name: 'Custom' };
-                associatedTokens.push(token);
-                return token;
-            });
-            
-            mainTextarea.value = text;
-            
-            // কাস্টম UI ট্যাগ জেনারেশন
-            const tagEl = document.createElement('div');
-            tagEl.className = 'tag';
-            tagEl.innerHTML = `
-                <span>${keyword}</span>
-                <button type="button">&times;</button>
-            `;
-            
-            // ক্রসে ক্লিক করলে কাস্টম কিওয়ার্ড আনহাইড হবে
-            tagEl.querySelector('button').addEventListener('click', function() {
-                associatedTokens.forEach(t => {
-                    if (window.AppUtils && typeof window.AppUtils.restoreText === 'function') {
-                        window.AppUtils.restoreText(t);
-                    }
-                });
-                tagEl.remove();
-            });
-            
-            customTagsContainer.appendChild(tagEl);
-            customFilterInput.value = ''; 
-            
-            // ওয়ার্ড কাউন্টার আপডেট করা
-            if (window.AppUtils && typeof window.AppUtils.updateWordCharCount === 'function') {
-                window.AppUtils.updateWordCharCount();
-            }
+window.getCustomKeywords = () => {
+    return [...hiddenDefaultKeywords, ...Array.from(userKeywords)];
+};
+
+window.clearCustomKeywords = () => {
+    userKeywords.clear();
+    customKeywordInput.value = '';
+    renderCustomTags();
+};
+
+const addCustomKeyword = () => {
+    const value = customKeywordInput.value.trim();
+    if (!value) return;
+    
+    if (!userKeywords.has(value.toLowerCase())) {
+        userKeywords.add(value.toLowerCase());
+        renderCustomTags();
+        
+        // Encrypt and log to console immediately upon addition
+        const encryptedHash = btoa(encodeURIComponent(value.toLowerCase()));
+        console.log(`%c[CUSTOM FILTERED]: ${encryptedHash}`, 'color: #00bcd4; font-weight: bold;');
+        
+        // Reactive text update trigger
+        if (typeof window.syncAndRenderText === 'function') {
+            window.syncAndRenderText();
         }
+    }
+    customKeywordInput.value = '';
+};
+
+addKeywordBtn.addEventListener('click', addCustomKeyword);
+customKeywordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomKeyword();
+    }
+});
+
+function renderCustomTags() {
+    customTagsContainer.innerHTML = '';
+    userKeywords.forEach(keyword => {
+        const tagEl = document.createElement('div');
+        tagEl.className = 'tag';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = keyword;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', () => {
+            userKeywords.delete(keyword);
+            renderCustomTags();
+            
+            // Log unhide status to console and remove tracking
+            console.log(`%c[CUSTOM UNHIDDEN]: ${keyword}`, 'color: #ff9800; font-weight: bold;');
+            
+            // Instantly unhide from the main textarea layout
+            if (typeof window.syncAndRenderText === 'function') {
+                window.syncAndRenderText();
+            }
+        });
+
+        tagEl.appendChild(textSpan);
+        tagEl.appendChild(removeBtn);
+        customTagsContainer.appendChild(tagEl);
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderCustomTags();
 });
