@@ -1,4 +1,3 @@
-
 @font-face {
     font-family: "Font Awesome 6 Free";
     font-style: normal;
@@ -16,6 +15,9 @@
 }
 
 
+/* ==========================================
+   ROOT
+   ========================================== */
 
 :root {
     --bg-color: #fafafa;
@@ -26,6 +28,11 @@
     --text-muted: #4b5563;
     --transition-smooth: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, background-color 0.2s ease;
 }
+
+
+/* ==========================================
+   GLOBAL
+   ========================================== */
 
 * {
     margin: 0;
@@ -50,6 +57,11 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+
+/* ==========================================
+   BACKGROUND ORBS
+   ========================================== */
+
 .glow-orb {
     position: fixed;
     width: 280px;
@@ -72,6 +84,11 @@ body {
     right: -60px;
     background: rgba(185, 28, 28, 0.03);
 }
+
+
+/* ==========================================
+   HEADER
+   ========================================== */
 
 .app-header {
     background: rgba(255, 255, 255, 0.9);
@@ -129,6 +146,11 @@ body {
     transform: scale(1.05);
 }
 
+
+/* ==========================================
+   HERO
+   ========================================== */
+
 .hero-section {
     text-align: center;
     padding: 28px 16px 18px 16px;
@@ -150,6 +172,11 @@ body {
     margin-bottom: 18px;
     line-height: 1.5;
 }
+
+
+/* ==========================================
+   OPEN SOURCE TRUST BANNER
+   ========================================== */
 
 .opensource-trust-banner {
     display: inline-flex;
@@ -200,108 +227,183 @@ body {
     text-overflow: ellipsis;
 }
 
+
+/* ==========================================
+   CATEGORY FILTERS
+   ========================================== */
+
 .category-filters {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    max-width: 720px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 8px;
 }
 
 .filter-pill {
     background: #ffffff;
-    border: 1px solid var(--border-color);
-    padding: 6px 14px;
-    border-radius: 18px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    border: 1px solid #dfe3e8;
+    padding: 9px 16px;
+    min-height: 36px;
+    border-radius: 7px;
+
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+
+    color: #374151;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
-    transition: var(--transition-smooth);
+
+    box-shadow: none;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.18s ease;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.filter-pill:hover, 
+.filter-pill:hover {
+    background: #f9fafb;
+    border-color: #cbd5e1;
+    color: var(--primary-color);
+}
+
 .filter-pill.active {
     background: var(--primary-color);
     color: #ffffff;
     border-color: var(--primary-color);
+
+    /* Same weight as normal state.
+       Prevents width/layout shift. */
     font-weight: 600;
-    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
+
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
 }
+
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
 
 .main-container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 12px 16px 24px 16px;
+    padding: 14px 16px 24px 16px;
 }
+
+
+/* ==========================================
+   TOOLS GRID
+   ========================================== */
 
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
 }
+
+
+/* ==========================================
+   TOOL CARDS
+   ========================================== */
 
 .tool-card {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+
+    padding: 19px 18px;
+
     cursor: pointer;
+
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 110px;
+    justify-content: flex-start;
+
+    min-height: 148px;
+
     position: relative;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-    transition: var(--transition-smooth);
+
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.025);
+
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.2s ease;
+
     contain: layout style paint;
+
     will-change: transform, box-shadow;
+
     transform: translateZ(0);
+
     backface-visibility: hidden;
+
     text-decoration: none;
+
     color: inherit;
 }
 
 .tool-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.08);
+    border-color: #d1d5db;
+
+    box-shadow:
+        0 7px 20px rgba(0, 0, 0, 0.065);
+
     transform: translateY(-2px);
 }
 
 .card-header-flex {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .card-icon {
-    width: 34px;
-    height: 34px;
-    background: rgba(220, 38, 38, 0.06);
-    border: 1px solid rgba(220, 38, 38, 0.12);
+    width: 42px;
+    height: 42px;
+
+    background: #fef2f2;
+
+    border: 1px solid #fee2e2;
+
     border-radius: 8px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: var(--primary-color);
-    font-size: 0.85rem;
+
+    font-size: 0.92rem;
+
     flex-shrink: 0;
-    transition: var(--transition-smooth);
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .tool-card:hover .card-icon {
     background: var(--primary-color);
     color: #ffffff;
+    border-color: var(--primary-color);
 }
 
 .tool-card h3 {
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--text-main);
     line-height: 1.3;
@@ -309,14 +411,22 @@ body {
 
 .tool-card p {
     color: var(--text-muted);
-    font-size: 0.78rem;
-    line-height: 1.4;
+    font-size: 0.77rem;
+    line-height: 1.5;
+
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+
     overflow: hidden;
-    margin-top: 8px;
+
+    margin-top: 13px;
 }
+
+
+/* ==========================================
+   FAQ
+   ========================================== */
 
 .faq-section {
     max-width: 760px;
@@ -405,6 +515,11 @@ body {
     margin-bottom: 0;
 }
 
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+
 .app-footer {
     background: #ffffff;
     border-top: 1px solid var(--border-color);
@@ -472,14 +587,22 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     width: 36px;
     height: 36px;
+
     background: #f9fafb;
+
     border: 1px solid var(--border-color);
+
     color: var(--text-main);
+
     border-radius: 8px;
+
     font-size: 0.85rem;
+
     text-decoration: none;
+
     transition: var(--transition-smooth);
 }
 
@@ -529,8 +652,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: wrap; 
-    gap: 6px 14px; 
+    flex-wrap: wrap;
+    gap: 6px 14px;
     font-size: 0.78rem;
 }
 
@@ -557,7 +680,18 @@ body {
     padding: 0 10px;
 }
 
+
+/* ==========================================
+   TABLET
+   ========================================== */
+
 @media (max-width: 900px) {
+
+    .tools-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
     .footer-container {
         display: flex;
         flex-direction: column;
@@ -565,6 +699,7 @@ body {
         text-align: center;
         gap: 28px;
     }
+
     .footer-tools-wrapper {
         display: flex;
         flex-direction: column;
@@ -572,124 +707,221 @@ body {
         gap: 24px;
         width: 100%;
     }
+
     .footer-col {
         width: 100%;
         max-width: 100%;
         text-align: center;
     }
+
     .footer-social-links {
         justify-content: center;
     }
 }
 
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
 @media (max-width: 640px) {
+
     .app-header {
         height: 50px;
     }
+
     .brand-name {
         font-size: 1.05rem;
     }
+
     .about-btn {
         width: 32px;
         height: 32px;
         font-size: 0.78rem;
     }
+
     .hero-section {
         padding: 18px 12px 12px 12px;
     }
+
     .hero-section h1 {
         font-size: 1.15rem;
         line-height: 1.25;
         margin-bottom: 5px;
     }
+
     .hero-section p {
         font-size: 0.78rem;
         line-height: 1.4;
         margin-bottom: 12px;
     }
+
     .opensource-trust-banner {
         padding: 6px 10px;
         margin-bottom: 12px;
     }
+
     .trust-icon {
         font-size: 1.1rem;
     }
+
     .trust-text span {
         font-size: 0.75rem;
     }
+
     .trust-text p {
         font-size: 0.65rem;
     }
+
+
+    /* ==========================================
+       MOBILE CATEGORY FILTERS
+       ========================================== */
+
     .category-filters {
-        gap: 5px;
+        gap: 6px;
         padding: 0 4px;
+        width: 100%;
     }
+
     .filter-pill {
-        font-size: 0.72rem;
-        padding: 4px 10px;
+        min-height: 32px;
+        padding: 7px 11px;
+        border-radius: 6px;
+
+        font-size: 0.71rem;
+        font-weight: 600;
+        line-height: 1;
+
+        flex-shrink: 0;
     }
+
+    .filter-pill.active {
+        font-weight: 600;
+    }
+
+
+    /* ==========================================
+       MOBILE TOOL GRID
+       ========================================== */
+
     .main-container {
-        padding: 6px 12px 16px 12px;
+        padding: 8px 12px 16px 12px;
     }
+
     .tools-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
+
     .tool-card {
-        padding: 12px;
-        min-height: auto;
+        padding: 15px;
+        min-height: 128px;
         border-radius: 8px;
     }
-    .card-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 0.75rem;
+
+    .card-header-flex {
+        gap: 9px;
     }
+
+    .card-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 0.78rem;
+        border-radius: 7px;
+    }
+
     .tool-card h3 {
         font-size: 0.82rem;
-        line-height: 1.25;
+        line-height: 1.3;
     }
+
     .tool-card p {
-        font-size: 0.7rem;
-        line-height: 1.35;
-        margin-top: 4px;
+        font-size: 0.68rem;
+        line-height: 1.4;
+        margin-top: 9px;
     }
+
+
+    /* ==========================================
+       FAQ
+       ========================================== */
+
     .faq-section {
         margin: 24px auto;
         padding: 0 12px;
     }
+
     .faq-container h2 {
         font-size: 1rem;
         margin-bottom: 10px;
     }
+
     .faq-question {
         font-size: 0.78rem;
         padding: 10px 12px;
     }
+
     .faq-answer p {
         font-size: 0.72rem;
         line-height: 1.4;
     }
+
+
+    /* ==========================================
+       FOOTER
+       ========================================== */
+
     .app-footer {
         padding: 24px 0 14px 0;
         margin-top: 28px;
     }
+
     .footer-col h3 {
         font-size: 0.9rem;
     }
+
     .footer-col h4 {
         font-size: 0.78rem;
     }
+
     .footer-col p {
         font-size: 0.7rem;
         line-height: 1.4;
     }
+
     .footer-tools-list li a {
         font-size: 0.72rem;
     }
 }
 
+
+/* ==========================================
+   SMALL MOBILE
+   ========================================== */
+
 @media (max-width: 480px) {
+
+    .category-filters {
+        gap: 5px;
+        padding: 0 2px;
+    }
+
+    .filter-pill {
+        min-height: 31px;
+        padding: 7px 10px;
+        font-size: 0.69rem;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .tool-card {
+        min-height: auto;
+    }
+
     .footer-links-container {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -698,15 +930,18 @@ body {
         margin: 0 auto;
         justify-items: center;
     }
+
     .footer-links-container span {
-        display: none; 
+        display: none;
     }
+
     .footer-links-container a {
         padding: 3px 0;
         text-align: center;
         width: 100%;
         font-size: 0.7rem;
     }
+
     .footer-bottom {
         font-size: 0.68rem;
     }
