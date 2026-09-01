@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional PII Detector & Redactor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="step-flow-container">
+            
+            <!-- STEP 1: Input Source Text -->
+            <div class="step-block">
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <h2><span class="step-num">1</span>Input Source Text</h2>
+                        <button type="button" class="import-btn" id="upload-trigger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                            </svg>
+                            Import File
+                        </button>
+                        <input type="file" id="hidden-file-input" accept=".txt" style="display: none;">
+                    </div>
+                    
+                    <textarea id="text-input" placeholder="Enter or paste your text here..."></textarea>
+                    <div class="textarea-counter"><span id="word-char-count">0 words | 0 chars</span></div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Custom Keyword Filter -->
+            <div class="step-block">
+                <div class="step-body">
+                    <h2 class="standalone-title"><span class="step-num">2</span>Custom Keyword Filter</h2>
+                    <div class="keyword-input-row">
+                        <input type="text" id="custom-keyword-input" placeholder="e.g., SecretProject">
+                        <button type="button" id="add-keyword-btn" class="btn-inline-add">Add</button>
+                    </div>
+                    <div class="tags-container" id="custom-tags-container"></div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Detected PII Items -->
+            <div class="step-block">
+                <div class="step-body">
+                    <div class="report-header">
+                        <h2><span class="step-num">3</span>Scan & Review Entities</h2>
+                        <span class="badge" id="detected-count">0</span>
+                    </div>
+                    
+                    <div class="detected-display-box" id="detected-items-container">
+                        <div class="empty-placeholder" id="empty-state-msg">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span>No items detected. Click "Scan & Filter Text" below.</span>
+                        </div>
+                    </div>
+
+                    <button type="button" id="scan-btn" class="btn btn-primary btn-full">Scan & Filter Text</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Actions -->
+            <div class="step-block">
+                <div class="step-body">
+                    <h2 class="standalone-title"><span class="step-num">4</span>Export Secure Output</h2>
+                    <div class="actions-row">
+                        <button type="button" id="copy-btn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Result
+                        </button>
+                        <button type="button" id="download-btn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            Download .txt
+                        </button>
+                        <button type="button" id="reset-btn" class="btn btn-danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="custom_filter.js"></script>
+    <script src="pii_detector.js"></script>
+    <script src="action.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --border-color: #cbd5e1;
+    --border-focus: #3b82f6;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-light: #fef2f2;
+
+    --email-bg: #f0fdf4;  --email-txt: #166534;  --email-brd: #bbf7d0;
+    --phone-bg: #f0f9ff;  --phone-txt: #075985;  --phone-brd: #bae6fd;
+    --ip-bg: #fff5f5;     --ip-txt: #991b1b;     --ip-brd: #fee2e2;
+    --custom-bg: #fffbeb; --custom-txt: #92400e; --custom-brd: #fde68a;
+
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   1. MOBILE OPTIMIZED VIEW (DEFAULT)
+   ========================================================================== */
+body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    padding: 0.5rem;
+    line-height: 1.4;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 100%;
+    background-color: var(--bg-card);
+    padding: 0.85rem; 
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.step-flow-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-block {
+    margin-bottom: 1.25rem; 
+}
+
+.step-body {
+    width: 100%;
+}
+
+/* সেকশন হেডার যেখানে ২টি আলাদা চাইল্ড এলিমেন্ট আছে (Title + Button/Badge) */
+.step-title-row, 
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem; 
+    gap: 0.5rem;
+}
+
+/* সব হেডিংয়ের জন্য স্ট্যান্ডার্ড লেফট-আলাইনড বেস স্টাইল (ফিক্সড টাইটেল স্প্লিট বাগ) */
+h2 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 0.9rem; /* মোবাইলের জন্য ক্লিয়ার ও রিডেবল সাইজ */
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.65rem; /* বক্স ও টাইটেলের সমান দূরত্ব নিশ্চিত করে */
+}
+
+/* যেখানে টাইটেল ছাড়া অন্য এলিমেন্ট নেই, সেখানে ওভাররাইড মার্জিন হ্যান্ডলিং */
+.step-title-row h2,
+.report-header h2 {
+    margin-bottom: 0; 
+}
+
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-right: 0.45rem;
+    flex-shrink: 0;
+}
+
+.import-btn {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 0.72rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.45rem;
+    border-radius: 5px;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.import-btn:hover {
+    background-color: var(--bg-page);
+}
+
+.import-btn svg {
+    width: 11px;
+    height: 11px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+textarea {
+    width: 100%;
+    height: 145px; 
+    padding: 0.65rem; 
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.85rem; /* মোবাইল ফ্রেন্ডলি ইনপুট সাইজ */
+    outline: none;
+    resize: vertical;
+    color: var(--text-main);
+    transition: var(--transition-smooth);
+}
+
+textarea::placeholder {
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+textarea:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+textarea::-webkit-scrollbar, .detected-display-box::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+textarea::-webkit-scrollbar-thumb, .detected-display-box::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 2px;
+}
+
+.textarea-counter {
+    text-align: right;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.keyword-input-row {
+    display: flex;
+    gap: 0.35rem;
+    margin-bottom: 0.45rem;
+}
+
+.keyword-input-row input {
+    flex: 1;
+    padding: 0.5rem 0.65rem; 
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.keyword-input-row input::placeholder {
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+.keyword-input-row input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.btn-inline-add {
+    padding: 0 0.85rem;
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-inline-add:hover {
+    background-color: #e2e8f0;
+    color: var(--text-main);
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.tag {
+    background: #f1f5f9;
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.tag button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 0.05rem 0.35rem;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border: 1px solid #dbeafe;
+}
+
+.detected-display-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-height: 65px; 
+    max-height: 120px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem; 
+    background-color: #f8fafc;
+    margin-bottom: 0.55rem;
+    align-content: flex-start;
+    overflow-y: auto;
+}
+
+.empty-placeholder {
+    width: 100%;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    text-align: center;
+}
+
+.empty-placeholder svg {
+    width: 14px;
+    height: 14px;
+    stroke: #94a3b8;
+}
+
+.pii-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-left: 0.45rem;
+    padding-right: 0.1rem;
+    height: 24px;
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+}
+
+.type-tag {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.01rem 0.12rem;
+    border-radius: 2px;
+}
+
+.pii-pill:has(.type-email) { border: 1px solid var(--email-brd); background: var(--email-bg); }
+.pii-pill:has(.type-phone) { border: 1px solid var(--phone-brd); background: var(--phone-bg); }
+.pii-pill:has(.type-ip) { border: 1px solid var(--ip-brd); background: var(--ip-bg); }
+.pii-pill:has(.type-custom) { border: 1px solid var(--custom-brd); background: var(--custom-bg); }
+
+.type-email { color: var(--email-txt); background: rgba(22, 101, 52, 0.05); }
+.type-phone { color: var(--phone-txt); background: rgba(7, 89, 133, 0.05); }
+.type-ip { color: var(--ip-txt); background: rgba(153, 27, 27, 0.05); }
+.type-custom { color: var(--custom-txt); background: rgba(146, 64, 14, 0.05); }
+
+.pill-value {
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pill-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--danger);
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.25rem;
+    min-width: 20px;
+    height: 100%;
+    border-radius: 0 2px 2px 0;
+    transition: var(--transition-smooth);
+}
+
+.pill-close:hover {
+    color: var(--danger-hover);
+    background-color: rgba(220, 38, 38, 0.05);
+}
+
+.btn {
+    padding: 0.55rem 0.45rem; 
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem; 
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    transition: var(--transition-smooth);
+    white-space: nowrap; 
+}
+
+.btn-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+.btn-primary { background-color: var(--primary); color: white; font-size: 0.85rem; padding: 0.6rem 0.85rem; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-secondary { background: #ffffff; color: var(--text-main); border-color: var(--border-color); width: 100%; }
+.btn-secondary:hover { background-color: var(--bg-page); }
+.btn-danger { background: var(--danger-light); color: var(--danger); border-color: #fecaca; width: 100%; font-size: 0.85rem; }
+.btn-danger:hover { background-color: var(--danger); color: white; }
+
+.btn-full {
+    width: 100%;
+}
+
+.actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+#reset-btn {
+    grid-column: span 2;
+    padding: 0.6rem 0.85rem;
+}
+
+
+/* ==========================================================================
+   2. DESKTOP VIEW
+   ========================================================================== */
+@media (min-width: 768px) {
+    body {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .app-container {
+        max-width: 820px;
+        padding: 2.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    .step-block {
+        margin-bottom: 1.75rem;
+    }
+
+    .step-title-row, 
+    .report-header {
+        margin-bottom: 0.75rem;
+    }
+
+    h2 {
+        font-size: 1.15rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .step-title-row h2,
+    .report-header h2 {
+        margin-bottom: 0; 
+    }
+
+    .step-num {
+        width: 22px;
+        height: 22px;
+        font-size: 0.8rem;
+        margin-right: 0.55rem;
+        border-radius: 5px;
+    }
+
+    .import-btn {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.65rem;
+    }
+
+    textarea {
+        height: 160px;
+        font-size: 0.95rem;
+        padding: 0.85rem;
+    }
+    
+    textarea::placeholder {
+        font-size: 0.92rem;
+    }
+
+    .keyword-input-row input {
+        font-size: 0.95rem;
+        padding: 0.6rem 0.85rem;
+    }
+    
+    .keyword-input-row input::placeholder {
+        font-size: 0.92rem;
+    }
+
+    .btn-inline-add {
+        font-size: 0.9rem;
+        padding: 0 1.25rem;
+    }
+
+    .detected-display-box {
+        min-height: 100px;
+        max-height: 200px;
+        padding: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-placeholder {
+        font-size: 0.85rem;
+    }
+
+    .pill-value {
+        font-size: 0.85rem;
+        max-width: 170px;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.65rem 1.25rem;
+    }
+
+    .actions-row {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .actions-row .btn {
+        width: auto;
+    }
+    
+    #reset-btn {
+        grid-column: auto;
+        margin-left: auto;
+    }
+}
+
+--action.js--
+window.performCopy = (text) => {
+    if (!text.trim()) {
+        alert('There is no text to copy.');
+        return;
+    }
+    navigator.clipboard.writeText(text)
+        .then(() => alert('Result copied to clipboard!'))
+        .catch(() => alert('Failed to copy text.'));
+};
+
+window.performDownload = (text) => {
+    if (!text.trim()) {
+        alert('There is no text to download.');
+        return;
+    }
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'redacted_output.txt';
+    link.click();
+    URL.revokeObjectURL(link.href);
+};
+--app.js--
+document.addEventListener('DOMContentLoaded', () => {
+    const textInput = document.getElementById('text-input');
+    const wordCharCount = document.getElementById('word-char-count');
+    const uploadTrigger = document.getElementById('upload-trigger');
+    const hiddenFileInput = document.getElementById('hidden-file-input');
+    
+    const scanBtn = document.getElementById('scan-btn');
+    const detectedItemsContainer = document.getElementById('detected-items-container');
+    const detectedCountBadge = document.getElementById('detected-count');
+    const emptyStateMsg = document.getElementById('empty-state-msg');
+    
+    const copyBtn = document.getElementById('copy-btn');
+    const downloadBtn = document.getElementById('download-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    // Safe Core State Memory
+    let originalText = '';
+    let activeDetectedPII = [];
+    let whitelistedPII = []; // ইউজার যে PII গুলো ক্রস করে বাদ দিয়েছেন তাদের মেমোরি
+    let isFiltered = false;
+    let savedReplacements = []; // মাস্কড টোকেনের পজিশন ট্র্যাকিং
+
+    function updateCounts() {
+        const text = textInput.value.trim();
+        const chars = textInput.value.length;
+        const words = text === '' ? 0 : text.split(/\s+/).length;
+        wordCharCount.textContent = `${words} words | ${chars} chars`;
+    }
+
+    // ১. প্রোঅ্যাক্টিভ কীবোর্ড শিল্ড (টোকেন মোডে এক ক্লিকে পুরো টোকেন ডিলিট)
+    textInput.addEventListener('keydown', (e) => {
+        if (!isFiltered) return;
+
+        const start = textInput.selectionStart;
+        const end = textInput.selectionEnd;
+
+        if (start === end) {
+            if (e.key === 'Backspace') {
+                let targetIdx = savedReplacements.findIndex(t => start > t.start && start <= t.end);
+                if (targetIdx !== -1) {
+                    e.preventDefault();
+                    deleteTokenAtIndex(targetIdx);
+                }
+            } else if (e.key === 'Delete') {
+                let targetIdx = savedReplacements.findIndex(t => start >= t.start && start < t.end);
+                if (targetIdx !== -1) {
+                    e.preventDefault();
+                    deleteTokenAtIndex(targetIdx);
+                }
+            }
+        }
+    });
+
+    // টোকেন মেমোরি ও স্ক্রিন থেকে একবারে মুছে ফেলার মেথড
+    function deleteTokenAtIndex(index) {
+        const token = savedReplacements[index];
+        
+        // ব্যাকএন্ড অরিজিনাল মেমোরি থেকে আসল টেক্সট বাদ দেওয়া
+        originalText = originalText.substring(0, token.origStart) + originalText.substring(token.origEnd);
+        
+        // ফ্রন্টএন্ড ভিউপোর্ট থেকে মাস্ক টোকেনটি রিমুভ করা
+        const textBefore = textInput.value.substring(0, token.start);
+        const textAfter = textInput.value.substring(token.end);
+        textInput.value = textBefore + textAfter;
+        
+        textInput.setSelectionRange(token.start, token.start);
+        
+        // গ্লোবাল স্টেট রি-প্রসেস করা
+        processGlobalFiltering();
+    }
+
+    // ২. টেক্সট টাইপিং ট্র্যাকিং (শুধুমাত্র যখন ফিল্টার করা হয়নি)
+    textInput.addEventListener('input', () => {
+        if (!isFiltered) {
+            originalText = textInput.value;
+            updateCounts();
+        }
+    });
+
+    // ফাইল আপলোড মেকানিজম
+    uploadTrigger.addEventListener('click', () => hiddenFileInput.click());
+    hiddenFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            originalText = evt.target.result;
+            textInput.value = originalText;
+            isFiltered = false;
+            whitelistedPII = [];
+            savedReplacements = [];
+            updateCounts();
+        };
+        reader.readAsText(file);
+        hiddenFileInput.value = '';
+    });
+
+    // ৩. গ্লোবাল বাটন পাইপলাইন ইঞ্জিন (হোয়াইটলিস্ট প্রোটেকশনসহ টু-পাস প্রসেসিং)
+    function processGlobalFiltering() {
+        // পাস ০: ইউজার যে PII গুলো ক্রস করে দিয়েছেন, অরিজিনাল টেক্সটে তাদের পজিশন বের করে "সেফ জোন" লক করা
+        let whitelistZones = [];
+        whitelistedPII.forEach(val => {
+            const safeValue = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(safeValue, 'g');
+            let match;
+            while ((match = regex.exec(originalText)) !== null) {
+                whitelistZones.push({
+                    index: match.index,
+                    endIndex: match.index + match[0].length
+                });
+            }
+        });
+
+        // পাস ১: একটিভ PII (Email, Phone, IP) খোঁজা এবং পজিশন লক করা
+        let piiMatches = [];
+        activeDetectedPII.forEach(item => {
+            const safeValue = item.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(safeValue, 'g');
+            let mask = '[REDACTED]';
+            if (item.type === 'email') mask = '[EMAIL]';
+            else if (item.type === 'phone') mask = '[PHONE]';
+            else if (item.type === 'ip') mask = '[IP]';
+
+            let match;
+            while ((match = regex.exec(originalText)) !== null) {
+                piiMatches.push({
+                    index: match.index,
+                    endIndex: match.index + match[0].length,
+                    value: match[0],
+                    mask: mask,
+                    type: item.type
+                });
+            }
+        });
+
+        // পাস ২: কাস্টম কিওয়ার্ড ফিল্টারিং (সেফ জোন এবং PII ওভারল্যাপ প্রোটেকশনসহ)
+        let customMatches = [];
+        if (typeof window.getCustomKeywords === 'function') {
+            const customWords = window.getCustomKeywords();
+            customWords.forEach(word => {
+                if (!word) return;
+                const safeWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
+                // খাঁটি ইংরেজি বাউন্ডারি রেগুলার এক্সপ্রেশন
+                const regex = new RegExp(`(?<![a-zA-Z0-9])${safeWord}(?![a-zA-Z0-9])`, 'gi');
+                let match;
+                while ((match = regex.exec(originalText)) !== null) {
+                    let matchStart = match.index;
+                    let matchEnd = match.index + match[0].length;
+
+                    // চেক ১: কিওয়ার্ডটি কোনো একটিভ PII (যেমন অন্য কোনো ইমেইল)-এর ভেতরে ঢুকে গেছে কি না
+                    let overlapsWithPII = piiMatches.some(pii => {
+                        return !(matchEnd <= pii.index || matchStart >= pii.endIndex);
+                    });
+
+                    // চেক ২: কিওয়ার্ডটি কি ইউজারের ক্রস করে দেওয়া "হোয়াইটলিস্টেড সেফ জোন" এর ভেতরে পড়েছে কি না
+                    let overlapsWithWhitelist = whitelistZones.some(w => {
+                        return !(matchEnd <= w.index || matchStart >= w.endIndex);
+                    });
+
+                    // কোনো প্রকার কনফ্লিক্ট বা ওভারল্যাপ না থাকলেই কেবল এটি মাস্কিং তালিকায় যুক্ত হবে
+                    if (!overlapsWithPII && !overlapsWithWhitelist) {
+                        customMatches.push({
+                            index: matchStart,
+                            endIndex: matchEnd,
+                            value: match[0],
+                            mask: '[REDACTED]',
+                            type: 'custom'
+                        });
+                    }
+                }
+            });
+        }
+
+        // সব একটিভ ম্যাচ একসাথে করে ক্রমানুসারে সাজানো
+        let allMatches = [...piiMatches, ...customMatches];
+        allMatches.sort((a, b) => a.index - b.index);
+
+        // চূড়ান্ত ওভারল্যাপ ফিল্টারিং
+        let filteredMatches = [];
+        let lastEndIndex = 0;
+        allMatches.forEach(m => {
+            if (m.index >= lastEndIndex) {
+                filteredMatches.push(m);
+                lastEndIndex = m.endIndex;
+            }
+        });
+
+        // মাস্কড টেক্সট জেনারেশন ও স্ক্রিন কোঅর্ডিনেট ম্যাপিং
+        let processedText = '';
+        let currentIdx = 0;
+        savedReplacements = [];
+
+        filteredMatches.forEach(m => {
+            processedText += originalText.substring(currentIdx, m.index);
+            
+            let startInMasked = processedText.length;
+            processedText += m.mask;
+            let endInMasked = processedText.length;
+
+            savedReplacements.push({ 
+                mask: m.mask, 
+                value: m.value, 
+                start: startInMasked, 
+                end: endInMasked,
+                origStart: m.index,
+                origEnd: m.endIndex
+            });
+            
+            currentIdx = m.endIndex;
+        });
+        processedText += originalText.substring(currentIdx);
+
+        // টেক্সটবক্সের ভিউ আপডেট করা
+        textInput.value = processedText;
+        isFiltered = savedReplacements.length > 0;
+        updateCounts();
+    }
+
+    // ৪. গ্লোবাল স্ক্যান বাটন ক্লিক অ্যাকশন (গ্লোবাল গেটওয়ে)
+    scanBtn.addEventListener('click', () => {
+        if (typeof window.scanStandardPII === 'function') {
+            whitelistedPII = []; // নতুন করে স্ক্যান করলে আগের হোয়াইটলিস্ট রিসেট হবে
+            activeDetectedPII = window.scanStandardPII(originalText);
+            updatePillUI();
+            processGlobalFiltering();
+        }
+    });
+
+    // PII পিল UI রেন্ডারার
+    function updatePillUI() {
+        const pills = detectedItemsContainer.querySelectorAll('.pii-pill');
+        pills.forEach(p => p.remove());
+        detectedCountBadge.textContent = activeDetectedPII.length;
+
+        if (activeDetectedPII.length === 0) {
+            emptyStateMsg.style.display = 'flex';
+            return;
+        }
+        emptyStateMsg.style.display = 'none';
+
+        activeDetectedPII.forEach((item, index) => {
+            const pill = document.createElement('div');
+            pill.className = 'pii-pill';
+            pill.innerHTML = `
+                <div class="pill-info">
+                    <span class="type-tag type-${item.type}">${item.type}</span>
+                    <span class="pill-value" title="${item.value}">${item.value}</span>
+                </div>
+                <button class="pill-close">&times;</button>
+            `;
+            
+            // ক্রস বাটনে ক্লিক করলে যা ঘটবে:
+            pill.querySelector('.pill-close').addEventListener('click', () => {
+                // ১. একটিভ লিস্ট থেকে রিমুভ করা
+                const removedItem = activeDetectedPII.splice(index, 1)[0];
+                if (removedItem) {
+                    // ২. এটিকে "হোয়াইটলিস্টেড সেফ জোন" মেমোরিতে পাঠানো
+                    whitelistedPII.push(removedItem.value);
+                }
+                updatePillUI();
+                // ৩. পুনরায় গ্লোবাল ফিল্টার ইঞ্জিন রান করা
+                processGlobalFiltering();
+            });
+            
+            detectedItemsContainer.appendChild(pill);
+        });
+    }
+
+    // গ্লোবাল অ্যাকশন বাটনসমূহ (Copy, Download, Reset)
+    copyBtn.addEventListener('click', () => {
+        if (typeof window.performCopy === 'function') window.performCopy(textInput.value);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (typeof window.performDownload === 'function') window.performDownload(textInput.value);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        originalText = '';
+        textInput.value = '';
+        activeDetectedPII = [];
+        whitelistedPII = [];
+        isFiltered = false;
+        savedReplacements = [];
+        updatePillUI();
+        updateCounts();
+        if (typeof window.clearCustomKeywords === 'function') window.clearCustomKeywords();
+    });
+});
+
+--custom_filter.js--
+const hiddenDefaultKeywords = ['password', 'secret', 'confidential', 'salary'];
+const userKeywords = new Set();
+
+const customKeywordInput = document.getElementById('custom-keyword-input');
+const addKeywordBtn = document.getElementById('add-keyword-btn');
+const customTagsContainer = document.getElementById('custom-tags-container');
+
+window.getCustomKeywords = () => {
+    return [...hiddenDefaultKeywords, ...Array.from(userKeywords)];
+};
+
+window.clearCustomKeywords = () => {
+    userKeywords.clear();
+    customKeywordInput.value = '';
+    renderCustomTags();
+};
+
+const addCustomKeyword = () => {
+    const value = customKeywordInput.value.trim();
+    if (!value) return;
+    
+    if (!userKeywords.has(value.toLowerCase())) {
+        userKeywords.add(value.toLowerCase());
+        renderCustomTags();
+        
+        // Encrypt and log to console immediately upon addition
+        const encryptedHash = btoa(encodeURIComponent(value.toLowerCase()));
+        console.log(`%c[CUSTOM FILTERED]: ${encryptedHash}`, 'color: #00bcd4; font-weight: bold;');
+        
+        // Reactive text update trigger
+        if (typeof window.syncAndRenderText === 'function') {
+            window.syncAndRenderText();
+        }
+    }
+    customKeywordInput.value = '';
+};
+
+addKeywordBtn.addEventListener('click', addCustomKeyword);
+customKeywordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomKeyword();
+    }
+});
+
+function renderCustomTags() {
+    customTagsContainer.innerHTML = '';
+    userKeywords.forEach(keyword => {
+        const tagEl = document.createElement('div');
+        tagEl.className = 'tag';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = keyword;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', () => {
+            userKeywords.delete(keyword);
+            renderCustomTags();
+            
+            // Log unhide status to console and remove tracking
+            console.log(`%c[CUSTOM UNHIDDEN]: ${keyword}`, 'color: #ff9800; font-weight: bold;');
+            
+            // Instantly unhide from the main textarea layout
+            if (typeof window.syncAndRenderText === 'function') {
+                window.syncAndRenderText();
+            }
+        });
+
+        tagEl.appendChild(textSpan);
+        tagEl.appendChild(removeBtn);
+        customTagsContainer.appendChild(tagEl);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderCustomTags();
+});
+
+--pii_detector.js--
+// Strictly scans only standard auto-PII expressions
+window.scanStandardPII = (sourceText) => {
+    let detectedItems = [];
+    const regexPatterns = {
+        email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        phone: /(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g,
+        ip: /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g
+    };
+
+    Object.entries(regexPatterns).forEach(([type, regex]) => {
+        let match;
+        regex.lastIndex = 0;
+        while ((match = regex.exec(sourceText)) !== null) {
+            if (!detectedItems.some(item => item.value === match[0])) {
+                detectedItems.push({ type, value: match[0] });
+            }
+        }
+    });
+    return detectedItems;
+};

@@ -1,0 +1,913 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Free PII Detector & Redactor | Client-Side Privacy Tools | hidePII</title>
+
+<meta name="description" content="Free online PII detector, PII redactor and privacy tools. Detect and mask personal data, remove EXIF metadata, scan API keys and clean tracking URLs directly in your browser. No uploads.">
+
+<meta name="keywords" content="PII detector, PII redactor, free PII detector, online PII detector, PII removal tool, data masking tool, personal data anonymizer, privacy tools, client-side privacy tools, EXIF remover, metadata remover, API key scanner, secret scanner, URL tracking remover, UTM remover, AI privacy scanner">
+
+<meta name="author" content="hidePII">
+
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+<link rel="canonical" href="https://hidepii.com/">
+
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+
+<link rel="icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hidepii.com/">
+<meta property="og:title" content="Free PII Detector & Redactor | hidePII">
+<meta property="og:description" content="Detect and redact personally identifiable information, remove metadata, scan secrets and clean tracking URLs directly in your browser. No data uploads.">
+<meta property="og:image" content="https://hidepii.com/og-image.png">
+<meta property="og:image:alt" content="hidePII free client-side privacy and security tools">
+<meta property="og:site_name" content="hidePII">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Free PII Detector & Redactor | hidePII">
+<meta name="twitter:description" content="Detect PII, redact personal data, remove EXIF metadata, scan API keys and clean tracking URLs directly in your browser.">
+<meta name="twitter:image" content="https://hidepii.com/og-image.png">
+<meta name="twitter:image:alt" content="hidePII privacy tools">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+<link rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      as="style">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      media="print"
+      onload="this.media='all'">
+
+<noscript>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</noscript>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": "https://hidepii.com/#website",
+            "url": "https://hidepii.com/",
+            "name": "hidePII",
+            "description": "Free client-side privacy tools for detecting, redacting, anonymizing and cleaning sensitive information in the browser.",
+            "inLanguage": "en"
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://hidepii.com/#webpage",
+            "url": "https://hidepii.com/",
+            "name": "Free PII Detector & Redactor | Client-Side Privacy Tools | hidePII",
+            "description": "Free online PII detector, PII redactor and privacy tools that process sensitive data directly in the browser.",
+            "isPartOf": {
+                "@id": "https://hidepii.com/#website"
+            },
+            "about": [
+                {
+                    "@type": "Thing",
+                    "name": "Personally Identifiable Information"
+                },
+                {
+                    "@type": "Thing",
+                    "name": "Data Privacy"
+                },
+                {
+                    "@type": "Thing",
+                    "name": "Online Security"
+                }
+            ],
+            "inLanguage": "en"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://hidepii.com/#application",
+            "name": "hidePII",
+            "url": "https://hidepii.com/",
+            "applicationCategory": "SecurityApplication",
+            "operatingSystem": "Web Browser",
+            "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "description": "Free browser-based privacy toolkit for detecting and redacting PII, masking sensitive data, removing metadata, scanning API keys and cleaning tracking URLs."
+        },
+        {
+            "@type": "ItemList",
+            "@id": "https://hidepii.com/#tools",
+            "name": "hidePII Privacy Tools",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "PII Detector & Redactor",
+                    "url": "https://hidepii.com/pii-detector/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Metadata Remover",
+                    "url": "https://hidepii.com/metadata-remover/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "EXIF Remover",
+                    "url": "https://hidepii.com/exif-remover/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 4,
+                    "name": "API Key Scanner",
+                    "url": "https://hidepii.com/api-key-scanner/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 5,
+                    "name": "Document Privacy Scanner",
+                    "url": "https://hidepii.com/document-privacy-scanner/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 6,
+                    "name": "AI Privacy Scanner",
+                    "url": "https://hidepii.com/ai-privacy-scanner/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 7,
+                    "name": "Data Masking Tool",
+                    "url": "https://hidepii.com/data-masking-tool/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 8,
+                    "name": "Text Anonymizer",
+                    "url": "https://hidepii.com/text-anonymizer/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 9,
+                    "name": "URL Tracking Cleaner",
+                    "url": "https://hidepii.com/url-tracking-cleaner/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 10,
+                    "name": "Secure Data Generator",
+                    "url": "https://hidepii.com/secure-generator/"
+                }
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "@id": "https://hidepii.com/#faq",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What is a PII detector?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "A PII detector identifies personally identifiable information such as email addresses, phone numbers, IP addresses and other sensitive identifiers in text or supported data. hidePII provides a browser-based PII detector and redactor that processes supported data locally."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does hidePII upload my data or files?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. hidePII is designed for client-side processing. Supported text and files are processed directly in your web browser rather than being uploaded to a hidePII server."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is hidePII a free PII detector and redactor?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. hidePII provides free browser-based privacy and security tools, including PII detection and redaction, data masking, text anonymization, metadata cleaning, EXIF removal and security scanning."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What privacy tools does hidePII provide?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "hidePII provides tools for detecting and redacting PII, removing image EXIF and metadata, scanning API keys and secrets, anonymizing text, masking sensitive data, cleaning tracking parameters from URLs and checking text before sharing it with AI services."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What does client-side processing mean?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Client-side processing means that supported data is processed by your own web browser instead of being sent to a remote application server. This architecture can reduce unnecessary data exposure because the data can remain on your device during processing."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is hidePII open source?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. hidePII publishes its source code on GitHub so users can inspect the implementation and understand how its browser-based privacy tools work."
+                    }
+                }
+            ]
+        }
+    ]
+}
+</script>
+
+</head><body><div class="glow-orb orb-1" aria-hidden="true"></div>
+<div class="glow-orb orb-2" aria-hidden="true"></div><header class="app-header"><div class="nav-container">
+
+    <a href="/" class="brand-name" aria-label="hidePII Home">
+        hide <span class="highlight">PII</span>
+    </a>
+
+    <a href="/about/"
+       id="nav-action-btn"
+       class="about-btn"
+       aria-label="About hidePII">
+
+        <i class="fa-solid fa-info" aria-hidden="true"></i>
+
+    </a>
+
+</div>
+
+</header><section class="hero-section"><h1>Free PII Detector & Privacy Tools</h1>
+
+<p>
+    Detect, redact, anonymize and clean Personally Identifiable Information (PII)
+    directly in your browser. Protect sensitive data with free client-side privacy
+    tools without uploading your content to a server.
+</p>
+
+<a href="https://github.com/hidepii"
+   target="_blank"
+   class="opensource-trust-banner"
+   rel="noopener noreferrer"
+   aria-label="View hidePII open source code on GitHub">
+
+    <div class="trust-icon" aria-hidden="true">
+        <i class="fa-brands fa-github"></i>
+    </div>
+
+    <div class="trust-text">
+
+        <span>100% Open Source & Serverless</span>
+
+        <p>
+            No backend processing or data uploads.
+            Inspect the source code on GitHub &rarr;
+        </p>
+
+    </div>
+
+</a>
+
+<div class="category-filters"
+     id="categoryFilters"
+     role="region"
+     aria-label="Privacy tool categories">
+
+    <button class="filter-pill active"
+            data-category="all"
+            type="button">
+
+        All Tools
+
+    </button>
+
+    <button class="filter-pill"
+            data-category="pii"
+            type="button">
+
+        PII & Text
+
+    </button>
+
+    <button class="filter-pill"
+            data-category="metadata"
+            type="button">
+
+        Metadata & EXIF
+
+    </button>
+
+    <button class="filter-pill"
+            data-category="scanner"
+            type="button">
+
+        Scanners
+
+    </button>
+
+    <button class="filter-pill"
+            data-category="utilities"
+            type="button">
+
+        Utilities
+
+    </button>
+
+</div>
+
+</section><main class="main-container"><h2 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;">
+    Free Online Privacy and Security Tools
+</h2>
+
+<div class="tools-grid" id="toolsGrid">
+
+    <a class="tool-card"
+       data-category="pii"
+       data-url="/pii-detector/"
+       href="/pii-detector/"
+       aria-label="Open PII Detector and Redactor">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-user-secret"></i>
+            </div>
+
+            <h3>PII Detector & Redactor</h3>
+
+        </div>
+
+        <p>
+            Detect and redact personally identifiable information such as
+            email addresses, phone numbers, IP addresses and other sensitive
+            identifiers directly in your browser.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="metadata"
+       data-url="/metadata-remover/"
+       href="/metadata-remover/"
+       aria-label="Open Metadata Remover">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-eraser"></i>
+            </div>
+
+            <h3>Metadata Remover</h3>
+
+        </div>
+
+        <p>
+            Remove hidden metadata and potentially sensitive information
+            from supported files locally without uploading your data.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="metadata"
+       data-url="/exif-remover/"
+       href="/exif-remover/"
+       aria-label="Open Image EXIF Remover">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-camera-retro"></i>
+            </div>
+
+            <h3>EXIF Remover</h3>
+
+        </div>
+
+        <p>
+            Remove image EXIF metadata such as GPS coordinates, camera
+            information and timestamps directly in your browser.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="scanner"
+       data-url="/api-key-scanner/"
+       href="/api-key-scanner/"
+       aria-label="Open API Key Scanner">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-key"></i>
+            </div>
+
+            <h3>API Key Scanner</h3>
+
+        </div>
+
+        <p>
+            Scan source code and text for exposed API keys, credentials,
+            secrets and confidential tokens before sharing or publishing them.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="scanner"
+       data-url="/document-privacy-scanner/"
+       href="/document-privacy-scanner/"
+       aria-label="Open Document Privacy Scanner">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+
+            <h3>Document Privacy Scanner</h3>
+
+        </div>
+
+        <p>
+            Check text documents for personal information, sensitive
+            identifiers and common privacy leakage risks before sharing.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="scanner"
+       data-url="/ai-privacy-scanner/"
+       href="/ai-privacy-scanner/"
+       aria-label="Open AI Privacy Scanner">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+
+            <h3>AI Privacy Scanner</h3>
+
+        </div>
+
+        <p>
+            Check prompts and text for sensitive information before
+            sharing private or confidential data with external AI services.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="pii"
+       data-url="/data-masking-tool/"
+       href="/data-masking-tool/"
+       aria-label="Open Data Masking Tool">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-mask"></i>
+            </div>
+
+            <h3>Data Masking Tool</h3>
+
+        </div>
+
+        <p>
+            Mask confidential strings, personal identifiers and sensitive
+            records using flexible custom masking patterns.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="pii"
+       data-url="/text-anonymizer/"
+       href="/text-anonymizer/"
+       aria-label="Open Text Anonymizer">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-eye-slash"></i>
+            </div>
+
+            <h3>Text Anonymizer</h3>
+
+        </div>
+
+        <p>
+            Anonymize names, locations and other identifiable information
+            in text directly in your browser without sending the content
+            to a remote server.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="utilities"
+       data-url="/url-tracking-cleaner/"
+       href="/url-tracking-cleaner/"
+       aria-label="Open URL Tracking Cleaner">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-link-slash"></i>
+            </div>
+
+            <h3>URL Tracking Cleaner</h3>
+
+        </div>
+
+        <p>
+            Remove common tracking parameters such as UTM tags and other
+            unnecessary tracking data from URLs before sharing them.
+        </p>
+
+    </a>
+
+    <a class="tool-card"
+       data-category="utilities"
+       data-url="/secure-generator/"
+       href="/secure-generator/"
+       aria-label="Open Secure Data Generator">
+
+        <div class="card-header-flex">
+
+            <div class="card-icon" aria-hidden="true">
+                <i class="fa-solid fa-fingerprint"></i>
+            </div>
+
+            <h3>Secure Data Generator</h3>
+
+        </div>
+
+        <p>
+            Generate strong passwords and privacy-friendly mock data
+            locally using your web browser.
+        </p>
+
+    </a>
+
+</div>
+
+</main><section class="faq-section" aria-labelledby="faq-heading"><div class="faq-container">
+
+    <h2 id="faq-heading">PII Detector & Privacy Tools FAQs</h2>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>What is a PII detector?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    A PII detector identifies personally identifiable information
+                    such as email addresses, phone numbers, IP addresses and other
+                    sensitive identifiers in text or supported data.
+                    <strong>hidePII</strong> provides a browser-based PII detector
+                    and redactor that processes supported data locally.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>Does hidePII upload my data or files?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    No. hidePII is designed for client-side processing.
+                    Supported text and files are processed directly in your
+                    web browser rather than being uploaded to a hidePII server.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>Is hidePII a free PII detector and redactor?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    Yes. hidePII provides free browser-based privacy and security
+                    tools, including PII detection and redaction, data masking,
+                    text anonymization, metadata cleaning, EXIF removal and
+                    security scanning.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>What privacy tools does hidePII provide?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    hidePII provides tools for detecting and redacting PII,
+                    removing image EXIF and metadata, scanning API keys and
+                    secrets, anonymizing text, masking sensitive data,
+                    cleaning tracking parameters from URLs and checking text
+                    before sharing it with AI services.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>What does client-side processing mean?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    Client-side processing means that supported data is processed
+                    by your own web browser instead of being sent to a remote
+                    application server. This architecture can reduce unnecessary
+                    data exposure because the data can remain on your device
+                    during processing.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="faq-item">
+
+        <button class="faq-question"
+                type="button"
+                aria-expanded="false">
+
+            <span>Is hidePII open source?</span>
+
+            <i class="fa-solid fa-chevron-down"
+               aria-hidden="true"></i>
+
+        </button>
+
+        <div class="faq-answer">
+
+            <div>
+
+                <p>
+                    Yes. hidePII publishes its source code on GitHub so users
+                    can inspect the implementation and understand how its
+                    browser-based privacy tools work.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section><footer class="app-footer"><div class="footer-wrapper">
+
+    <div class="footer-container">
+
+        <div class="footer-col brand-col">
+
+            <h3>hide <span class="highlight">PII</span></h3>
+
+            <p>
+                A free, open-source, client-side privacy toolkit for detecting,
+                masking, anonymizing and cleaning sensitive information directly
+                in your browser.
+            </p>
+
+            <div class="footer-social-links">
+
+                <a href="https://github.com/hidepii"
+                   target="_blank"
+                   class="social-btn github-btn"
+                   rel="noopener noreferrer"
+                   aria-label="View hidePII source code on GitHub">
+
+                    <i class="fa-brands fa-github"
+                       aria-hidden="true"></i>
+
+                    <span>View Source</span>
+
+                </a>
+
+                <a href="https://dev.to/hidepii"
+                   target="_blank"
+                   class="social-btn"
+                   rel="noopener noreferrer"
+                   aria-label="hidePII on Dev.to">
+
+                    <i class="fa-brands fa-dev"
+                       aria-hidden="true"></i>
+
+                </a>
+
+                <a href="https://facebook.com/hidepii"
+                   target="_blank"
+                   class="social-btn"
+                   rel="noopener noreferrer"
+                   aria-label="hidePII on Facebook">
+
+                    <i class="fa-brands fa-facebook-f"
+                       aria-hidden="true"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="footer-tools-wrapper">
+
+            <div class="footer-col tools-category">
+
+                <h4>Privacy Scrubbers</h4>
+
+                <ul class="footer-tools-list">
+
+                    <li>
+                        <a href="/pii-detector/">PII Detector & Redactor</a>
+                    </li>
+
+                    <li>
+                        <a href="/metadata-remover/">Metadata Remover</a>
+                    </li>
+
+                    <li>
+                        <a href="/exif-remover/">Image EXIF Remover</a>
+                    </li>
+
+                    <li>
+                        <a href="/document-privacy-scanner/">Document Privacy Scanner</a>
+                    </li>
+
+                    <li>
+                        <a href="/url-tracking-cleaner/">URL Tracking Cleaner</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="footer-col tools-category">
+
+                <h4>Security & Scanners</h4>
+
+                <ul class="footer-tools-list">
+
+                    <li>
+                        <a href="/data-masking-tool/">Data Masking Tool</a>
+                    </li>
+
+                    <li>
+                        <a href="/text-anonymizer/">Text Anonymizer</a>
+                    </li>
+
+                    <li>
+                        <a href="/api-key-scanner/">API Key Scanner</a>
+                    </li>
+
+                    <li>
+                        <a href="/ai-privacy-scanner/">AI Privacy Scanner</a>
+                    </li>
+
+                    <li>
+                        <a href="/secure-generator/">Secure Data Generator</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-links-bar">
+
+        <div class="footer-links-container">
+
+            <a href="/about/">About hidePII</a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a href="/privacy/">Privacy Policy</a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a href="/terms/">Terms of Service</a>
+
+            <span aria-hidden="true">&bull;</span>
+
+            <a href="/contact/">Contact information</a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            &copy; <span id="current-year">2026</span>
+            hidepii.com Open Source under MIT License.
+        </p>
+
+    </div>
+
+</div>
+
+</footer><script src="script.js" defer></script></body>
+</html>
