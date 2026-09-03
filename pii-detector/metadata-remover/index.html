@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Metadata Remover & EXIF Cleaner | hidePII</title>
+    <meta name="description"
+        content="Free online metadata and EXIF remover tool. Strip hidden file properties, camera EXIF, document tracking and author signatures directly in your browser. No uploads.">
+    <meta name="author" content="hidePII">
+    <link rel="canonical" href="https://hidepii.com/metadata-remover/">
+    <link rel="icon" href="/favicon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- pdf -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- EXIF.js for deep image metadata reading -->
+    <script src="https://cdn.jsdelivr.net/npm/exif-js" defer></script>
+    <!-- JSZip for deep Office & Archive metadata stripping -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Background Glow Orbs -->
+    <div class="glow-orb orb-1" aria-hidden="true"></div>
+    <div class="glow-orb orb-2" aria-hidden="true"></div>
+
+    <!-- Header aligned with main tool content width -->
+    <header class="app-header">
+        <div class="nav-container">
+            <a href="https://hidepii.com/" class="brand-name" aria-label="hidePII Home">
+                hide <span class="highlight">PII</span>
+            </a>
+            <a href="https://hidepii.com/" id="nav-action-btn" class="about-btn" aria-label="Home">
+                <i class="fa-solid fa-house" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <div class="hero-section" style="padding: 16px 0 12px 0; max-width: 100%; margin: 0 auto; text-align: center;">
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Metadata &
+                EXIF Remover</h1>
+            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.4;">
+                Strip hidden metadata, camera EXIF data, document revision tracking, and author signatures directly in
+                your browser.
+            </p>
+
+            <!-- Single Line Clean GitHub Trust Badge -->
+            <div style="margin-top: 12px; display: flex; justify-content: center;">
+                <a href="https://github.com/hidepii/metadata-remover" target="_blank" class="hero-github-card"
+                    rel="noopener noreferrer">
+                    <div class="github-card-icon">
+                        <i class="fa-brands fa-github" aria-hidden="true"></i>
+                    </div>
+                    <div class="github-card-content">
+                        <span class="github-card-title">100% Open Source & Serverless</span>
+                        <span class="github-card-desc">Inspect the source code on GitHub &rarr;</span>
+                    </div>
+                </a>
+            </div>a
+        </div>
+
+        <!-- Tool App Card Wrapper -->
+        <div class="tool-app-card">
+            <!-- Minimizable Supported Formats Notice -->
+            <details class="format-notice">
+                <summary>Supported Formats (Tap to view)</summary>
+                <div class="format-details">
+                    <strong>Images (JPG, PNG, WebP):</strong> 100% Precision (Canvas)<br>
+                    <strong>PDFs:</strong> 99%-100% Precision (Deep Scrub)<br>
+                    <strong>Office Docs (DOCX, XLSX, PPTX):</strong> 95%-99% Precision (XML Scrub)<br>
+                    <strong>SVG & EPUB:</strong> 95%-99% Precision (Metadata Clean)<br>
+                    <strong>Other Files:</strong> Standard Stream Bypass
+
+
+            </details>
+
+            <!-- Upload Box -->
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon" aria-hidden="true">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 26px; color: var(--primary-color);"></i>
+                </div>
+                <span class="upload-label">Tap to upload or <strong>browse</strong></span>
+                <input type="file" id="fileInput">
+            </div>
+
+            <!-- File Preview Section -->
+            <div id="filePreviewContainer" class="file-preview-container" style="display: none;">
+                <div class="file-info-card">
+                    <img id="previewThumb" src="" alt="Thumb" style="display: none;">
+                    <div class="file-details">
+                        <span id="fileNameDisplay"></span>
+                        <span id="fileSizeDisplay"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status"></div>
+
+            <!-- Scrollable Output Box -->
+            <div class="result-box" id="resultBox">
+                <h4>Scan & Purge Logs:</h4>
+                <ul id="logList"></ul>
+            </div>
+
+            <a id="downloadBtn" class="download-btn">Download Clean File</a>
+
+            <!-- Serverless Performance Disclaimer Box -->
+            <div class="disclaimer-box">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <span><strong>Performance Notice:</strong> Because all processing runs serverlessly in your browser,
+                    lower-spec devices or unusually large files may experience minor lag.</span>
+            </div>
+        </div>
+        <!-- How to Use Section (Minimizable) -->
+        <!-- How to Use Section (Minimizable) -->
+        <details class="tool-app-card" style="margin-top: 25px;">
+            <summary
+                style="font-size: 0.86rem; font-weight: 700; color: var(--text-main); cursor: pointer; outline: none; user-select: none;">
+                How to Use Metadata Remover</summary>
+            <div style="margin-top: 12px;">
+                <p style="margin-bottom: 10px; font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">
+                    Simply tap or drag any image, document, archive, or video file into the secure upload box above. The
+                    utility instantly scans and strips hidden EXIF data, GPS coordinates, author metadata, and revision
+                    tracking entirely client-side inside your browser with zero server uploads.
+                </p>
+                <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">
+                    Once the forensic deep purge is complete, review the execution logs and click <strong>Download Clean
+                        File</strong> to instantly save your 100% sanitized file.
+                </p>
+            </div>
+        </details>
+
+
+
+        <!-- FAQ Section -->
+        <section class="faq-section" aria-labelledby="faq-heading">
+            <div class="faq-container">
+                <h2 id="faq-heading">Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>What is file metadata and why should I remove it?</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Metadata contains hidden details such as your camera model, GPS location coordinates,
+                                author names, software revisions, and creation timestamps which can compromise your
+                                privacy when sharing files online.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>Are my files uploaded or stored on any server?</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>No. All processing, scanning, and metadata purging happen entirely client-side inside
+                                your browser using JavaScript. Your files never leave your device.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>What file formats are supported by this tool?</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>It supports images (JPG, PNG, WebP), office documents (DOCX, XLSX, PPTX), ZIP archives,
+                                media files (MP3, MP4), and PDF documents.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>Can this tool completely wipe GPS location from mobile photos?</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Yes. By utilizing aggressive canvas re-rendering and EXIF strip engines, all hidden
+                                geolocation tags, MakerNotes, and camera parameters are completely destroyed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>Is this metadata remover completely free to use?</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Yes, hidePII tools are 100% free, open-source privacy utilities designed to keep your
+                                personal data secure without subscriptions or hidden fees.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer matched to main container width -->
+    <footer class="app-footer">
+        <div class="footer-wrapper">
+            <div class="footer-container">
+                <div class="footer-col brand-col">
+                    <h3>hide <span class="highlight">PII</span></h3>
+                    <p>
+                        A free, open-source, client-side privacy toolkit for detecting,
+                        masking, anonymizing and cleaning sensitive information directly
+                        in your browser.
+                    </p>
+                    <div class="footer-social-links">
+                        <a href="https://github.com/hidepii" target="_blank" class="social-btn github-btn"
+                            rel="noopener noreferrer" aria-label="View source on GitHub">
+                            <i class="fa-brands fa-github" aria-hidden="true"></i>
+                            <span>View Source</span>
+                        </a>
+                        <a href="https://dev.to/hidepii" target="_blank" class="social-btn" rel="noopener noreferrer"
+                            aria-label="Dev.to">
+                            <i class="fa-brands fa-dev" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://facebook.com/hidepii" target="_blank" class="social-btn"
+                            rel="noopener noreferrer" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-tools-wrapper">
+                    <div class="footer-col tools-category">
+                        <h4>Privacy Scrubbers</h4>
+                        <ul class="footer-tools-list">
+                            <li><a href="https://hidepii.com/pii-detector">PII Detector & Redactor</a></li>
+                            <li><a href="https://hidepii.com/metadata-remover">Metadata Remover</a></li>
+                            <li><a href="https://hidepii.com/exif-remover">Image EXIF Remover</a></li>
+                            <li><a href="https://hidepii.com/document-privacy-scanner">Document Privacy Scanner</a></li>
+                            <li><a href="https://hidepii.com/url-tracking-cleaner">URL Tracking Cleaner</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col tools-category">
+                        <h4>Security & Scanners</h4>
+                        <ul class="footer-tools-list">
+                            <li><a href="https://hidepii.com/data-masking-tool">Data Masking Tool</a></li>
+                            <li><a href="https://hidepii.com/text-anonymizer">Text Anonymizer</a></li>
+                            <li><a href="https://hidepii.com/api-key-scanner">API Key Scanner</a></li>
+                            <li><a href="https://hidepii.com/ai-privacy-scanner">AI Privacy Scanner</a></li>
+                            <li><a href="https://hidepii.com/secure-generator">Secure Data Generator</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links-bar">
+                <div class="footer-links-container">
+                    <a href="https://hidepii.com/about">About hidePII</a>
+                    <span aria-hidden="true">&bull;</span>
+                    <a href="https://hidepii.com/privacy">Privacy Policy</a>
+                    <span aria-hidden="true">&bull;</span>
+                    <a href="https://hidepii.com/terms">Terms of Service</a>
+                    <span aria-hidden="true">&bull;</span>
+                    <a href="https://hidepii.com/contact">Contact information</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year">2026</span> hidepii.com Open Source under MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
