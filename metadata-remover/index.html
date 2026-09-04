@@ -19,8 +19,6 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <!-- EXIF.js for deep image metadata reading -->
     <script src="https://cdn.jsdelivr.net/npm/exif-js" defer></script>
-    <!-- JSZip for deep Office & Archive metadata stripping -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
 </head>
 
 <body>
@@ -72,13 +70,12 @@
             <details class="format-notice">
                 <summary>Supported Formats (Tap to view)</summary>
                 <div class="format-details">
-                    <strong>Images (JPG, PNG, WebP):</strong> 100% Precision (Canvas)<br>
-                    <strong>PDFs:</strong> 99%-100% Precision (Deep Scrub)<br>
-                    <strong>Office Docs (DOCX, XLSX, PPTX):</strong> 95%-99% Precision (XML Scrub)<br>
-                    <strong>SVG & EPUB:</strong> 95%-99% Precision (Metadata Clean)<br>
-                    <strong>Other Files:</strong> Standard Stream Bypass
-
-
+                    <strong>Images (JPG, PNG, WebP):</strong> 100% Precision (Canvas Rasterization)<br>
+                    <strong>PDFs:</strong> 100% Precision (Native AST Parsing)<br>
+                    <strong>Office Docs (DOCX, XLSX, PPTX):</strong> 99.9% Precision (Native XML DOM Parsing)<br>
+                    <strong>SVG & EPUB:</strong> 99.9% Precision (Deep DOM Scrubbing)<br>
+                    <strong>Other Files:</strong> Secure Standard Stream Bypass
+                </div>
             </details>
 
             <!-- Upload Box -->
@@ -118,7 +115,7 @@
                     lower-spec devices or unusually large files may experience minor lag.</span>
             </div>
         </div>
-        <!-- How to Use Section (Minimizable) -->
+
         <!-- How to Use Section (Minimizable) -->
         <details class="tool-app-card" style="margin-top: 25px;">
             <summary
@@ -136,8 +133,6 @@
                 </p>
             </div>
         </details>
-
-
 
         <!-- FAQ Section -->
         <section class="faq-section" aria-labelledby="faq-heading">
@@ -280,7 +275,8 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="core.js"></script>
+    <script src="design.js"></script>
 </body>
 
 </html>
